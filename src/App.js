@@ -93,7 +93,7 @@ const App = () => {
       <div className="app__top">
         <div className="app__left">
           <div className="app__header">
-            <h1>COVID 19 TRACKER</h1>
+            <h1>COVID 19 AND VACCINE TRACKER</h1>
             <FormControl className="app__dropdown">
               {/* onchnage function will run once something has change from the select element */}
               <Select
