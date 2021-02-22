@@ -1,6 +1,5 @@
 {
   "name": "covid19tracker",
-  "homepage": "https://Solaiman.github.oi/Covid-19-Tracker",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

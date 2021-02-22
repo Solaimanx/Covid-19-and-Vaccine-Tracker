@@ -14,7 +14,14 @@ import Table from "./Table";
 import "./Table.css";
 import { sortData, prettyPrintStat } from "./util";
 import LineGraph from "./LineGraph";
-import 'leaflet/dist/leaflet.css'
+import LineGraphVaccine from "./LineGraphVaccine";
+import "leaflet/dist/leaflet.css";
+import LinkIcon from '@material-ui/icons/Link';
+import FacebookIcon from '@material-ui/icons/Facebook';
+import GitHubIcon from '@material-ui/icons/GitHub';
+
+
+
 
 
 const App = () => {
@@ -23,14 +30,9 @@ const App = () => {
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
   const [mapCenter, setMapCenter] = useState([34.80736, -40.4796]);
-  const [mapZoom, setMapZoom] = useState(2);
+  const [mapZoom, setMapZoom] = useState(3);
   const [mapCountries, setMapCountries] = useState([]);
   const [casesType, setCasesType] = useState("cases");
-
-  console.log("Map data for check casestype", mapCountries);
-
-  console.log("this is map center lat, long after change", mapCenter);
-  console.log("map zoom after change", mapZoom);
 
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
@@ -42,13 +44,11 @@ const App = () => {
 
   /// STATE = how to write a veriable in REACT <<<<
   //// https://disease.sh/v3/covid-19/countries >>> API request link
-
   /// USEEFFECT =   Run a piece of code base on a given conditions
+  // The code inside here will run once , when the component loads not again
+  // async -> send a request , wait for it, do something with the info
 
   useEffect(() => {
-    // The code inside here will run once , when the component loads not again
-    // async -> send a request , wait for it, do something with the info
-
     const getCountriesData = async () => {
       await fetch("https://disease.sh/v3/covid-19/countries")
         .then((response) => response.json())
@@ -59,7 +59,6 @@ const App = () => {
             name: country.country, // united state , uinted kindgom , bangladesh
             value: country.countryInfo.iso2, // UK , USA, BD, FR,
           }));
-
           const sortedData = sortData(data);
           setTableData(sortedData);
           setCountries(countries);
@@ -77,19 +76,16 @@ const App = () => {
       countryCode === "worldwide"
         ? "https://disease.sh/v3/covid-19/all"
         : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
-
     await fetch(url)
       .then((response) => response.json())
       .then((data) => {
         setCountry(countryCode);
-        // all of the data from the country response
         setCountryInfo(data);
-        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        countryCode === "worldwide"
+          ? setMapCenter([34.80736, -40.4796])
+          : setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
         setMapZoom(4);
-        console.log("this is lat and long", data);
       });
-
-    ///
   };
 
   return (
@@ -101,14 +97,18 @@ const App = () => {
             <FormControl className="app__dropdown">
               {/* onchnage function will run once something has change from the select element */}
               <Select
-                veriant="outlined"
+                variant="outlined"
                 onChange={onCountryChange}
                 value={country}
               >
                 {/* Loop through all the countries and show a drop down list of the option  */}
-                <MenuItem value="worldwide">Worldwide</MenuItem>
+                <MenuItem value="worldwide" name={country.name}>
+                  Worldwide
+                </MenuItem>
                 {countries.map((country) => (
-                  <MenuItem value={country.value}>{country.name}</MenuItem>
+                  <MenuItem value={country.value} name={country.name}>
+                    {country.name}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
@@ -154,11 +154,26 @@ const App = () => {
             <Table countries={tableData} />
             <h3 className="app__graphTitle">Worldwide new {casesType}</h3>
             <LineGraph className="app__graph" casesType={casesType} />
+            <h3 className="app__graphTitle"> {country} Vaccine Graph </h3>
+            <LineGraphVaccine className="app__graph2" country={country} />
           </CardContent>
         </Card>
       </div>
       <div className="app__bottom">
         <h5>Build by solaiman</h5>
+        <div className="app__bottomSocialLink">
+        <a href="https://github.com/solaimanx">
+            <GitHubIcon className="app__bottomIcon" />
+          </a>
+          <a href="https://www.facebook.com/Mohammadsolaiman0/">
+            <FacebookIcon className="app__bottomIcon" />
+          </a>
+          <a href="http://edevelopmark.com/">
+            <LinkIcon className="app__bottomIcon" />
+          </a>
+        </div>
+          
+        
       </div>
     </div>
   );

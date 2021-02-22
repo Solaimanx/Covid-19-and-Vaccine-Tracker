@@ -8,7 +8,7 @@ const casesTypeColors = {
     multiplier: 800,
   },
   recovered: {
-    hex: "#7dd71d",
+    hex: "#008000",
     multiplier: 1200,
   },
   deaths: {
@@ -19,23 +19,26 @@ const casesTypeColors = {
 
 export const sortData = (data) => {
   const sortedData = [...data];
-
   return sortedData.sort((a, b) => (a.cases > b.cases ? -1 : 1));
 };
 
+
 export const prettyPrintStat = (stat) =>
   stat ? `+${numeral(stat).format("0,0a")}` : "+0";
+  
 
 /// Draw cirecles ont the map with intereactive tooltop
-export const showDataOnMap = (data, casesType = "cases") =>
+export const showDataOnMap = (data, casesType) =>
   data.map((country) => (
     <Circle
+    pathOptions={{ 
+      color: casesTypeColors[casesType].hex,
+      fillColor: casesTypeColors[casesType].hex
+    }}
       center={[country.countryInfo.lat, country.countryInfo.long]}
       fillOpacity={0.4}
-      color={casesTypeColors[casesType].hex}
-      fillColor={casesTypeColors[casesType].hex}
       radius={
-        Math.sqrt(country[casesType]) * casesTypeColors[casesType].multiplier
+        Math.sqrt(country[casesType]/2) * casesTypeColors[casesType].multiplier
       }
     >
       <Popup>

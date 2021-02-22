@@ -6,7 +6,6 @@ body {
 }
 
 
-
 .app__top {
   display: flex;
   justify-content: space-evenly;
@@ -38,6 +37,9 @@ body {
 .app__graph{
   flex-grow: 1;
 }
+.app__graph2{
+  flex-grow: 4;
+}
 
 
 .app__header {
@@ -67,6 +69,8 @@ body {
 }
 
 .app__bottom{
+  display: flex;
+  flex-direction: column;
   align-items: center;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -74,5 +78,17 @@ body {
 
 .app__bottom > h5{ 
   text-align: center;
+  font-color: rgb(187, 181, 181);
 }
 
+.app__bottomSocialLink {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items:center;
+}
+
+.app__bottomIcon{
+  font-size: 40px!important;
+  margin: 5px;
+}

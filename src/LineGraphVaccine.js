@@ -3,7 +3,9 @@ import { Line } from "react-chartjs-2";
 import { useState, useEffect } from "react";
 import numeral from "numeral";
 
+
 const options = {
+  
   legend: {
     display: false,
   },
@@ -23,12 +25,13 @@ const options = {
     },
   },
   scales: {
+    
     xAxes: [
       {
-        ticks: {
+        ticks:{
           beginAtZero: true,
         },
-
+        
         type: "time",
         time: {
           format: "MM/DD/YY",
@@ -43,7 +46,8 @@ const options = {
         },
         ticks: {
           beginAtZero: true,
-
+          
+          
           // Include a dollar sign in the ticks
           callback: function (value, index, values) {
             return numeral(value).format("0a");
@@ -54,47 +58,78 @@ const options = {
   },
 };
 
-const LineGraph = ({ casesType = "cases", ...props }) => {
+
+
+
+
+const LineGraph = ({...props }) => {
+
+  const [casesType, setCasesType] = useState([]);/// to keep the color
   const [data, setData] = useState({});
 
-  const buildChartData = (data, casesType = "cases") => {
+
+  
+  const buildChartData = (data) => {
     let chartData = [];
     let lastDataPoint;
-    for (let date in data.cases) {
+    for (let date in data) {
       if (lastDataPoint) {
         let newDataPoint = {
           x: date,
-          y: data[casesType][date] - lastDataPoint,
+          y: data[date] - lastDataPoint,
         };
         chartData.push(newDataPoint);
       }
-      lastDataPoint = data[casesType][date];
+      lastDataPoint = data[date];
     }
     return chartData;
   };
-  const [borderColor, setBorderColor] = useState(["#CC1034"]);
-  const [backgroundColor, setBackgroundColor] = useState([
-    "rgba(204, 16, 52, 0.5)",
-  ]);
+
+
+  const [borderColor, setBorderColor] = useState(["#008000"])
+  const [backgroundColor, setBackgroundColor] = useState(["rgba(204, 16, 52, 0.5)"])
+
+
 
   useEffect(() => {
+
+     const url = props.country === "worldwide"
+    ? "https://disease.sh/v3/covid-19/vaccine/coverage?lastdays=30" 
+    :`https://disease.sh/v3/covid-19/vaccine/coverage/countries/${props.country}?lastdays=60` ;
+
     const fetchData = async () => {
-      fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=60")
+       await fetch(url)
         .then((response) => response.json())
         .then((data) => {
-          console.log("first data", data);
-          const chartData = buildChartData(data, casesType);
+
+
+        const chartData = props.country === "worldwide"?
+         buildChartData(data) :buildChartData(data.timeline) ;
+
           setData(chartData);
-          casesType === "recovered"
-            ? setBorderColor("#008000")
-            : setBorderColor("#CC1034");
-          casesType === "recovered"
-            ? setBackgroundColor("rgb(102,177,134)")
-            : setBackgroundColor("rgba(204, 16, 52, 0.5)");
+          
+
+          console.log("x,y data from linegraph2", data.timeline)
+        
+         
+          // This is for covid19/vaccine/coverage/countries?lastdays=60
+          // const checkData = data.map((map)=>({
+          //   name: map.country,
+          //   date: map.timeline, 
+          // }));
+          // console.log("checkdata", checkData)
+
+          casesType === "recovered"? setBorderColor("#008000"):setBorderColor("#008000");
+          casesType === "recovered"? setBackgroundColor("rgb(102,177,134)"): setBackgroundColor("rgb(102,177,134)");
+
         });
+
     };
     fetchData();
-  }, [casesType]);
+  }, [props.day,props.country]);
+
+
+
 
   return (
     <div className={props.className}>
@@ -105,7 +140,7 @@ const LineGraph = ({ casesType = "cases", ...props }) => {
             datasets: [
               {
                 backgroundColor: `${backgroundColor}`,
-                borderColor: `${borderColor}`,
+                borderColor:  `${borderColor}`,
                 data: data,
               },
             ],
